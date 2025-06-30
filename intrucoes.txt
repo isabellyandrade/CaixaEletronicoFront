@@ -1,10 +1,3 @@
-Excelente pergunta! Com o Controller da API pronto, o seu Back-End está 100% completo e funcional. Ele já está no ar (rodando na sua máquina, se você executar a Main), com todas as regras de negócio, segurança e padrões de projeto implementados, esperando para ser usado.
-
-Parabéns, a parte mais complexa da arquitetura já foi feita.
-
-"E agora?" Agora é a hora de construir o Front-End Gráfico – o "aplicativo" que seu usuário final vai ver e usar para se comunicar com o seu Back-End.
-
-Aqui está um roteiro prático do que fazer agora:
 
 Passo 1: Deixe seu Back-End Rodando
 Antes de mais nada, você precisa "ligar" sua API.
