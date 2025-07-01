@@ -6,8 +6,6 @@ Abra o terminal na pasta raiz do seu projeto Java (na pasta MeuBancoDigital).
 
 Compile e execute a classe Main. Se você estiver usando Maven, o comando é simples:
 
-Bash
-
 mvn compile exec:java -Dexec.mainClass="org.example.Main"
 Você deverá ver a mensagem: API do Banco Digital iniciada em http://localhost:7070.
 
