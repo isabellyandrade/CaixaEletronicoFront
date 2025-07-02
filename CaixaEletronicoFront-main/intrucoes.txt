@@ -1,0 +1,39 @@
+
+Passo 1: Deixe seu Back-End Rodando
+Antes de mais nada, você precisa "ligar" sua API.
+
+Abra o terminal na pasta raiz do seu projeto Java (na pasta MeuBancoDigital).
+
+Compile e execute a classe Main. Se você estiver usando Maven, o comando é simples:
+
+mvn compile exec:java -Dexec.mainClass="org.example.Main"
+Você deverá ver a mensagem: API do Banco Digital iniciada em http://localhost:7070.
+
+Deixe este terminal aberto. Enquanto ele estiver rodando, seu Back-End está no ar, pronto para receber pedidos.
+
+Passo 2: Teste sua API com o Postman (Recomendado)
+Antes mesmo de escrever uma linha de código do Front-End, é uma ótima prática testar se sua API está funcionando como esperado. O Postman é a ferramenta perfeita para isso.
+
+Teste o Login:
+
+Abra o Postman.
+
+Crie uma nova requisição POST para o endereço http://localhost:7070/login.
+
+Vá na aba "Body", selecione a opção "raw" e o formato "JSON".
+
+No corpo, cole: {"nome": "joao", "senha": "123"}.
+
+Clique em "Send". Você deve receber como resposta um JSON com "sucesso": true e um "token". Copie o valor do token!
+
+Teste o Extrato (Rota Protegida):
+
+Crie uma nova requisição GET para http://localhost:7070/extrato.
+
+Vá na aba "Headers". Adicione uma nova chave: Authorization.
+
+No valor, cole o token que você copiou, precedido por "Bearer ". Ex: Bearer joao-token-secreto.
+
+Clique em "Send". Você deve receber o extrato e o saldo da conta do João em formato JSON.
+
+Se esses dois testes funcionarem, seu Back-End está perfeito.
