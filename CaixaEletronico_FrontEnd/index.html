@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Caixa Eletrônico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="area-deslogada">
+            <h1>Caixa Eletrônico</h1>
+            <div id="form-login">
+                <h2>Login</h2>
+                <input id="login-username" type="text" placeholder="Nome de usuário (ex: joao)">
+                <input id="login-password" type="password" placeholder="Senha (ex: 123)">
+                <button onclick="fazerLogin()">Entrar</button>
+                <p id="mensagem-login" class="mensagem-feedback"></p>
+                <a href="#" onclick="mostrarCadastro()">Não tem conta? Cadastre-se</a>
+            </div>
+            <div id="form-cadastro" style="display: none;">
+                <h2>Cadastro</h2>
+                <input id="cadastro-username" type="text" placeholder="Nome de usuário">
+                <input id="cadastro-password" type="password" placeholder="Senha">
+                <input id="cadastro-tipo-conta" type="number" placeholder="Tipo de conta (1: Corrente, 2: Poupança)">
+                <button onclick="fazerCadastro()">Cadastrar</button>
+                <p id="mensagem-cadastro" class="mensagem-feedback"></p>
+                <a href="#" onclick="mostrarLogin()">Já tem conta? Faça login</a>
+            </div>
+        </div>
+
+        <div id="area-logada">
+            <h2 id="boas-vindas"></h2>
+            <p>Saldo atual: <strong id="saldo-atual">R$ 0,00</strong></p>
+            <hr>
+            <div>
+                <h3>Operações</h3>
+                <input id="valor-operacao" type="number" placeholder="Digite o valor">
+                <button onclick="fazerDeposito()">Depositar</button>
+                <button onclick="fazerSaque()" class="secondary">Sacar</button>
+            </div>
+            <hr>
+            <div>
+                <h3>Transferência</h3>
+                <input id="usuario-destino" type="text" placeholder="Nome de usuário do destinatário">
+                <input id="valor-transferencia" type="number" placeholder="Valor da transferência">
+                <button onclick="fazerTransferencia()">Transferir</button>
+            </div>
+            <hr>
+            <button class="secondary" onclick="consultarExtrato()">Ver Extrato</button>
+            <div id="extrato-lista"></div>
+            <p id="mensagem-operacao" class="mensagem-feedback"></p>
+            <hr>
+            <button class="secondary" onclick="deslogar()">Sair</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
