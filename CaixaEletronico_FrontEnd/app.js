@@ -40,13 +40,14 @@ async function fazerCadastro() {
 async function fazerLogin() {
     const nome = document.getElementById('login-username').value;
     const senha = document.getElementById('login-password').value;
+    const codigo = document.getElementById('login-codigo').value;
     const mensagemEl = document.getElementById('mensagem-login');
 
     try {
         const response = await fetch(`${apiUrl}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, senha })
+            body: JSON.stringify({ nome, senha, codigo })
         });
 
         const data = await response.json();

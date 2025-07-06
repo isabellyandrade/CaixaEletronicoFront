@@ -18,7 +18,7 @@ public class ContaProxy implements Conta {
     private final Conta contaReal;
     private final Usuario usuario;
 
-    // A "memória" do nosso caixa eletrônico. É 'static' porque o caixa é um só.
+    // A "memória" do caixa eletrônico.
     private static final Map<Integer, Integer> slotsDeNotas = new LinkedHashMap<>();
 
     static {
@@ -40,8 +40,6 @@ public class ContaProxy implements Conta {
         if (usuario != null && usuario.isAutenticado()) {
             return true;
         }
-        // No MVC, o Proxy não deve imprimir erros para a View.
-        // A falha em retornar 'true' será tratada pelo Controller.
         System.out.println("[Proxy LOG] Tentativa de operação falhou: Usuario nao autenticado.");
         return false;
     }
@@ -75,7 +73,6 @@ public class ContaProxy implements Conta {
         boolean sucesso = contaReal.sacar(valor);
         if (sucesso) {
             atualizarSlots(planoDeSaque);
-            // O Proxy não informa mais o sucesso ao usuário. O Controller fará isso.
             System.out.println("[Proxy LOG] Saque de R$" + valor + " efetuado. Notas dispensadas: " + planoDeSaque);
             return true;
         }
@@ -103,7 +100,7 @@ public class ContaProxy implements Conta {
     // Métodos de consulta que precisam de autenticação
     @Override
     public double getSaldo() {
-        return verificarAutenticacao() ? contaReal.getSaldo() : -1; // Retorna -1 para indicar erro
+        return verificarAutenticacao() ? contaReal.getSaldo() : -1;
     }
 
     @Override

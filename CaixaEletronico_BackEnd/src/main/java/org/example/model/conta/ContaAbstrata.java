@@ -4,10 +4,8 @@ import org.example.model.Transacao;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * MODEL: Implementação base de uma Conta. Contém a lógica de negócio principal.
- * Não sabe nada sobre a interface com o usuário.
- */
+//MODEL: Implementação base de uma Conta. Contém a lógica de negócio principal.
+
 public abstract class ContaAbstrata implements Conta {
     protected String numeroConta;
     protected double saldo;
@@ -76,5 +74,5 @@ public abstract class ContaAbstrata implements Conta {
         return new ArrayList<>(this.historicoTransacoes); 
     }
     
-    public abstract void exibirTipoConta(); // Este método é mais da View, mas vamos mantê-lo por simplicidade
+    public abstract void exibirTipoConta();
 }

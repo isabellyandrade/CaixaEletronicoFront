@@ -19,7 +19,7 @@ public class CaixaEletronicoView {
         System.out.println("[0] Sair do Programa");
         System.out.print("Escolha uma opcao: ");
         int escolha = scanner.nextInt();
-        scanner.nextLine(); // Limpeza de buffer
+        scanner.nextLine();
         return escolha;
     }
     
@@ -86,7 +86,7 @@ public class CaixaEletronicoView {
             Iterator<Transacao> it = historico.iterator();
             while(it.hasNext()){
                 Transacao t = it.next();
-                System.out.println(t); // Usando o método toString() da Transacao
+                System.out.println(t);
             }
         }
         System.out.println("------------------------------------------------------------------");

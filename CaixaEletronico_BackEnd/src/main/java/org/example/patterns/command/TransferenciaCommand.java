@@ -14,22 +14,13 @@ public class TransferenciaCommand implements Command {
     private final Conta contaDestino;
     private final double valor;
 
-    /**
-     * 2. O CONSTRUTOR agora aceita os TRÊS parâmetros que o Controller envia.
-     * @param contaOrigem A conta que vai enviar o dinheiro (o Proxy).
-     * @param contaDestino A conta que vai receber.
-     * @param valor O montante a ser transferido.
-     */
     public TransferenciaCommand(Conta contaOrigem, Conta contaDestino, double valor) {
         this.contaOrigem = contaOrigem;
         this.contaDestino = contaDestino;
         this.valor = valor;
     }
 
-    /**
-     * 3. O MÉTODO EXECUTE agora usa os campos guardados para chamar o método
-     * 'transferir' com os DOIS parâmetros que ele exige.
-     */
+
     @Override
     public boolean execute() {
         return this.contaOrigem.transferir(this.valor, this.contaDestino);

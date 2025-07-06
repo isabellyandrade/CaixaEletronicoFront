@@ -11,6 +11,12 @@ import org.example.patterns.factory.ContaFactory;
 import org.example.patterns.factory.ContaPoupancaFactory;
 import org.example.patterns.proxy.ContaProxy;
 
+import org.example.patterns.chainOfResponsibility.ValidationHandler;
+import org.example.patterns.chainOfResponsibility.NomeValidationHandler;
+import org.example.patterns.chainOfResponsibility.SenhaFormatValidationHandler;
+import org.example.patterns.chainOfResponsibility.ValidationResult;
+import org.example.patterns.chainOfResponsibility.CodigoValidationHandler;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.HashMap;
@@ -20,8 +26,7 @@ import java.util.Objects;
 public class CaixaEletronicoController {
     private final Map<String, Usuario> usuariosDb = new HashMap<>();
 
-    // O construtor agora só precisa do 'app'
-    public CaixaEletronicoController    (Javalin app) {
+    public CaixaEletronicoController(Javalin app) {
         cadastrarUsuariosIniciais();
 
         app.post("/usuarios", this::cadastrarNovoUsuario);
@@ -34,29 +39,45 @@ public class CaixaEletronicoController {
     }
 
     private void efetuarLogin(Context ctx) {
-        // Usamos o método nativo do Javalin, que já usa o Gson que configuramos
         LoginRequest loginReq = ctx.bodyAsClass(LoginRequest.class);
+
+        ValidationHandler nomeHandler = new NomeValidationHandler();
+        ValidationHandler senhaFormatHandler = new SenhaFormatValidationHandler();
+        ValidationHandler codigoHandler = new CodigoValidationHandler();
+
+        // 1. Montar a cadeia
+        nomeHandler.setNext(senhaFormatHandler);
+        senhaFormatHandler.setNext(codigoHandler);
+
+        // 2. Iniciar a validação da cadeia
+
+        ValidationResult validationResult = nomeHandler.handle(loginReq);
+
+        if (!validationResult.isSuccess()) {
+            // Se a validação falhou, retorna o erro contido no ValidationResult
+            ctx.status(400).json(new LoginResponse(false, validationResult.getErrorMessage(), null));
+            return; // Interrompe o processo de login
+        }
+
+        // Se a cadeia de responsabilidade passou, procede com a autenticação real
         Usuario user = usuariosDb.get(loginReq.nome.toLowerCase());
 
         if (user != null && user.autenticar(loginReq.senha)) {
             String token = user.getNome() + "-token-secreto";
-            // A chamada ctx.json(...) vai usar nosso Gson automaticamente, sem warnings!
             ctx.json(new LoginResponse(true, "Login bem-sucedido!", token));
         } else {
-            ctx.status(401).json(new LoginResponse(false, "Usuário ou senha inválidos.", null));
+            ctx.status(401).json(new LoginResponse(false, "Credenciais inválidas. Usuário, senha ou código não conferem.", null));
         }
+
     }
 
     private void efetuarSaque(Context ctx) {
         Usuario user = autenticarViaToken(ctx);
         if (user == null) return;
-
         Conta contaProxy = new ContaProxy(user.getConta(), user);
         OperacaoRequest saqueReq = ctx.bodyAsClass(OperacaoRequest.class);
-
         Command saqueCommand = new SaqueCommand(contaProxy, saqueReq.valor);
         boolean sucesso = saqueCommand.execute();
-
         if (sucesso) {
             ctx.json(Map.of("sucesso", true, "novoSaldo", contaProxy.getSaldo()));
         } else {
@@ -64,10 +85,6 @@ public class CaixaEletronicoController {
         }
     }
 
-    // ... todos os outros métodos do controller seguem o mesmo padrão,
-    // usando ctx.bodyAsClass() em vez de gson.fromJson() ...
-
-    // Deixei os outros métodos aqui para você poder copiar e colar tudo de uma vez.
     private void cadastrarNovoUsuario(Context ctx) {
         CadastroRequest req = ctx.bodyAsClass(CadastroRequest.class);
         String nome = req.nome.toLowerCase();
@@ -133,24 +150,20 @@ public class CaixaEletronicoController {
         ctx.json(Map.of("sucesso", true, "saldo", contaProxy.getSaldo()));
     }
 
-    // A versão corrigida
     private void consultarExtrato(Context ctx) {
         Usuario user = autenticarViaToken(ctx);
         if (user == null) return;
         Conta contaProxy = new ContaProxy(user.getConta(), user);
 
-        // 1. Pegamos a lista de objetos Transacao, como antes.
         List<org.example.model.Transacao> historico = contaProxy.getHistoricoTransacoes();
 
-        // 2. Usamos o poder do Java para transformar cada objeto Transacao em sua representação de String.
         List<String> historicoFormatado = historico.stream()
-                .map(Object::toString) // Para cada transação na lista, chama o método toString()
-                .collect(java.util.stream.Collectors.toList());
+                .map(Object::toString)
+                .collect(Collectors.toList());
 
-        // 3. Enviamos a lista de Strings já formatadas no JSON.
         ctx.json(Map.of(
                 "sucesso", true,
-                "extrato", historicoFormatado, // << Enviando a lista de Strings simples
+                "extrato", historicoFormatado,
                 "saldo", contaProxy.getSaldo()
         ));
     }
@@ -171,17 +184,18 @@ public class CaixaEletronicoController {
     }
 
     private void cadastrarUsuariosIniciais() {
-        Usuario user1 = new Usuario("joao", "123", new ContaCorrenteFactory());
+        Usuario user1 = new Usuario("joao", "1234", new ContaCorrenteFactory());
         user1.getConta().depositar(1500);
         usuariosDb.put(user1.getNome(), user1);
-        Usuario user2 = new Usuario("maria", "456", new ContaPoupancaFactory());
+        Usuario user2 = new Usuario("maria", "6789", new ContaPoupancaFactory());
         user2.getConta().depositar(3250.50);
         usuariosDb.put(user2.getNome(), user2);
     }
 
     // Classes DTO
     static class CadastroRequest { String nome; String senha; int tipoConta; }
-    static class LoginRequest { String nome; String senha; }
+    public static class LoginRequest{ public String nome; public String senha; public String codigo;
+    }
     static class LoginResponse {
         boolean sucesso; String mensagem; String token;
         LoginResponse(boolean s, String m, String t) { sucesso = s; mensagem = m; token = t; }

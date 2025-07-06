@@ -3,11 +3,8 @@ package org.example.model.conta;
 import org.example.model.Transacao;
 import java.util.List;
 
-/**
- * MODEL: A interface que define o contrato de uma Conta.
- * Não tem ideia de como os dados são exibidos (View)
- * ou de como as ações são iniciadas (Controller).
- */
+//MODEL DA CONTA
+
 public interface Conta {
     boolean depositar(double valor);
     boolean sacar(double valor);

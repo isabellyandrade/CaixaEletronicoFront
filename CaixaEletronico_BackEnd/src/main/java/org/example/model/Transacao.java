@@ -16,7 +16,7 @@ public class Transacao {
         this.descricao = descricao;
     }
 
-    // Método para formatar a transação para exibição no extrato
+    // Formata a transação para exibição no extrato
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
