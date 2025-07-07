@@ -21,7 +21,7 @@ public class Main {
 
         // 3. Entregamos o adaptador para o Javalin na sua criação.
         Javalin app = Javalin.create(config -> {
-            config.jsonMapper(adapter); // <== ESTA É A FORMA CORRETA
+            config.jsonMapper(adapter); 
             config.plugins.enableCors(cors -> {
                 cors.add(it -> it.anyHost());
             });
